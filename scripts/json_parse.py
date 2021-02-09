@@ -40,13 +40,3 @@ with open('json_parsed.csv', mode='w') as csv_file:
 
         csv_writer.writerow([case_number, dice, voxel_size[0], voxel_size[1], voxel_size[2]])
 
-
-
-
-
-# with open('employee_file.csv', mode='w') as employee_file:
-#     employee_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-
-#     employee_writer.writerow(['John Smith', 'Accounting', 'November'])
-#     employee_writer.writerow(['Erica Meyers', 'IT', 'March'])
-
