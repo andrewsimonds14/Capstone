@@ -17,7 +17,7 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 from sklearn.cluster import KMeans
 
 # import data as a dataframe
-brainMetsFeaturesRaw = pd.read_csv('brainMetsMriRadiomicFeatures.csv')
+brainMetsFeaturesRaw = pd.read_csv('./brainMetsMriRadiomicFeatures.csv')
 
 # visualize data 
 # NOTE: most of visualization done in MATLAB
@@ -85,7 +85,7 @@ fig = sns.heatmap(corrMatrix, annot=True)
 plt.show()
 
 # save selected features as csv for prediction model
-predictingData.to_csv(r'predictionData.csv', index = False)
+predictingData.to_csv(r'./predictionData.csv', index = False)
 
 
 # Clustering

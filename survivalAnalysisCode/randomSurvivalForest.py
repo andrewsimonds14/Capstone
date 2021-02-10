@@ -20,7 +20,7 @@ from pysurvival.utils.display import compare_to_actual
 from pysurvival.utils.display import integrated_brier_score
 
 # import selected features from previous script
-predictionData = pd.read_csv('C:/Users/Simon/Documents/MATLAB/survivalAnalysis/predictionData.csv')
+predictionData = pd.read_csv('./predictionData.csv')
 #predictionData.AliveStatus0Dead1Alive = predictionData.AliveStatus0Dead1Alive.eq(0).mul(1)
 
 # create necessary variables for model training
