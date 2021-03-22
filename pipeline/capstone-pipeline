@@ -2,28 +2,24 @@
 # Run pipeline on desired image
 
 # SEGMENTATION
-# Ask user for NIFTY file path
 
+# Ask user for NIFTY file path
 echo 'Enter folder where desired image is (FSRTCASE_XXX.nii.gz)'
 read inputFolder
+mkdir -p $inputFolder/../outputTest
 
-mkdir -p $inputFolder/results
+# nnUNet_predict -i $inputFolder -o $inputFolder/results -t 502 -m 3d_fullres --save_npz
 
-nnUNet_predict -i $inputFolder -o $inputFolder/results -t 502 -m 3d_fullres --save_npz
-
-# New NIFTY saved somewhere, we need to access it here
-
-# Open new NIFTI in slicer if possible
+# New NIFTY saved in $inputFolder/../outputTest, we need to access it here to open in slicer for viewing if possible
 
 # FEATURE EXTRACTION
 
-# Give new NIFTI to extraction.py
+python extraction.py $inputFolder $inputFolder/../outputTest
 
-# Get csv of features saved somewhere, access it here
+# CSV of features saved at ../inputFolder level
+# Normalize feature and remove colinear features in csv
 
-# Normalize feature csv
 
-# Remove colinear features in csv
 
 # SURVIVAL PREDICTION
 
