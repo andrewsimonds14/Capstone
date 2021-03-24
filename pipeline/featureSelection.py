@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -10,8 +11,8 @@ stats.chisqprob = lambda chisq, df: stats.chi2.sf(chisq, df)
 from statsmodels.stats.outliers_influence import variance_inflation_factor    
 from sklearn.cluster import KMeans
 
-# import data as a dataframe
-brainMetsFeaturesRaw = pd.read_csv('./brainMetsMriRadiomicFeatures.csv')
+# import data as a dataframe from script python arg
+brainMetsFeaturesRaw = pd.read_csv('./radiomicfeatures.csv')
 
 # visualize data 
 # NOTE: most of visualization done in MATLAB
@@ -19,12 +20,6 @@ pd.set_option('display.max_columns', 500)
 brainMetsFeaturesRaw.columns
 brainMetsFeaturesRaw
 brainMetsFeaturesRaw.describe()
-
-# visualize correlations of all features as a heatmap (VERY SLOW)
-#corrMatrix = brainMetsFeaturesRaw.corr()
-#plt.rcParams['figure.figsize'] = [40, 20]
-#fig = sns.heatmap(corrMatrix, annot=True)
-#plt.show()
 
 # remove letters from patient number
 for i, name in enumerate(brainMetsFeaturesRaw.patient):
@@ -34,33 +29,30 @@ for i, name in enumerate(brainMetsFeaturesRaw.patient):
 patients = brainMetsFeaturesRaw['patient']
 patients = pd.to_numeric(patients)
 
-# Remove colinear features
-X = brainMetsFeaturesRaw.drop(columns = ['patient'])
-thresh = 5.0
-variables = list(range(X.shape[1]))
-dropped = True
-while dropped:
-    dropped = False
-    vif = [variance_inflation_factor(X.iloc[:, variables].values, ix)
-         for ix in range(X.iloc[:, variables].shape[1])]
-    maxloc = vif.index(max(vif))
-    if max(vif) > thresh:
-        print('dropping \'' + X.iloc[:, variables].columns[maxloc] +'\' at index: ' + str(maxloc))
-        del variables[maxloc]
-        dropped = True
-print('Remaining variables:')
-print(X.columns[variables])
-brainMetsSelectedFeatures = X.iloc[:, variables]
+brainMetsMinusPatients = brainMetsFeaturesRaw.drop(columns = ['patient'])
 
 # Apply min-max column wise normilization
-brainMetsSelectedFeaturesNormalized = (brainMetsSelectedFeatures-brainMetsSelectedFeatures.min())/(brainMetsSelectedFeatures.max()-brainMetsSelectedFeatures.min())
+#print('MIN: ', brainMetsMinusPatients.min())
+#print('MAX: ', brainMetsMinusPatients.max())
+#print('DATA: ', brainMetsMinusPatients)
+# Need to change up normalizing since we only have one data point
+# Maybe load in a sample csv and normalize our data point based on that?
 
-#Remove low variance features
-for cols in brainMetsSelectedFeaturesNormalized.columns:
-    if np.var(brainMetsSelectedFeaturesNormalized[cols]) <= 0.1:
-        print('Dropping: ' + cols)
-        brainMetsSelectedFeaturesFinal = brainMetsSelectedFeaturesNormalized.drop(columns=cols)
-brainMetsSelectedFeaturesFinal= brainMetsSelectedFeaturesNormalized
+brainMetsSelectedFeaturesNormalized = (brainMetsMinusPatients-brainMetsMinusPatients.min())/(brainMetsMinusPatients.max()-brainMetsMinusPatients.min())
+
+# Compare with static predictionData csv to keep certain columns
+comparisonData = pd.read_csv('comparisonPredictionData.csv')
+columnsCurrent = list(brainMetsSelectedFeaturesNormalized.columns.values)
+columnsToKeep = list(comparisonData.columns.values)
+columnsToDrop = []
+
+brainMetsSelectedFeaturesFinal = brainMetsSelectedFeaturesNormalized
+
+for col in columnsCurrent:
+    if col not in columnsToKeep:
+        columnsToDrop.append(col)
+
+brainMetsSelectedFeaturesFinal.drop(columns=columnsToDrop)
 
 # add patient number back to dataframe
 brainMetsSelectedFeaturesFinal['patient'] = patients 
@@ -72,14 +64,10 @@ outcomeData = pd.read_csv('brainMets_features_survivalInDays.csv')
 predictingData = pd.merge(left=outcomeData, right=brainMetsSelectedFeaturesFinal, left_on='Study', right_on='patient')
 predictingData = predictingData.drop(columns = [ 'Study','patient', 'ofMets', 'FSRTcourse', 'Ariacourse', 'Age', 'DateofdeathorLastFU', 'DateofBrainmetdiagnosis', 'FSRTcompletiondate', 'GTVVolumecc', 'GTVEqRadiuscm' ])
 
-# visualize correlations as a heatmap
-corrMatrix = predictingData.corr()
-plt.rcParams['figure.figsize'] = [40, 20]
-fig = sns.heatmap(corrMatrix, annot=True)
-plt.show()
+
 
 # save selected features as csv for prediction model
-predictingData.to_csv(r'./predictionData.csv', index = False)
+predictingData.to_csv(r'./finalPredictionData.csv', index = False)
 
 
 

@@ -9,7 +9,6 @@ import sys
 data_path = str(sys.argv[1]) #FSRTCASE_200_0000.nii" # Directory holding NIFTI files images
 data_path_mask = str(sys.argv[2]) #FSRTCASE_200.nii # Directory holding NIFTI files masks
 row_flag = 1
-print(data_path, data_path_mask)
 
 with open('radiomicfeatures.csv', mode='w') as csv_file:
 
@@ -21,9 +20,7 @@ with open('radiomicfeatures.csv', mode='w') as csv_file:
             patient_name = name.split('_')[0] + name.split('_')[1]
 
             # Read the .nii image containing the volume with SimpleITK:
-            print(img_name)
             raw = sitk.ReadImage(img_name)
-            print(mask_name)
             mask = sitk.ReadImage(mask_name)
 
             # Load raw image into variable "raw"

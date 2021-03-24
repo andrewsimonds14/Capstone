@@ -1,34 +1,37 @@
 #!/bin/bash
 # Run pipeline on desired image
 
+# Change working directory to where we wanna be in case it's being run from somewhere else
+#cd /home/lab/capstoneGit/Capstone
+
 # SEGMENTATION
 
 # Ask user for NIFTY file path
 echo 'Enter folder where desired image is (FSRTCASE_XXX.nii.gz)'
 read inputFolder
 mkdir -p $inputFolder/../outputTest
+echo -e '---START Segmentation---\n'
 
 # nnUNet_predict -i $inputFolder -o $inputFolder/results -t 502 -m 3d_fullres --save_npz
 
 # New NIFTY saved in $inputFolder/../outputTest, we need to access it here to open in slicer for viewing if possible
+echo -e '---FINISH Segmentation---\n'
 
 # FEATURE EXTRACTION
-
+echo -e '---START Feature Extraction---\n'
 python extraction.py $inputFolder $inputFolder/../outputTest
+echo -e '---FINISH Feature Extraction---\n'
 
-# CSV of features saved at ../inputFolder level
 # Normalize feature and remove colinear features in csv
-
-
+echo -e '---START Feature Selection---\n'
+python featureSelection.py
+echo -e '---FINISH Feature Selection---\n'
 
 # SURVIVAL PREDICTION
-
+echo -e '---START Survival Prediction---\n'
 # Give pre-processed csv to survival prediction model
+python randomSurvivalForest.py
 
 # Output graph of survival prediction
 
-#echo Hello, who\'s this?
-
-#read name
-
-#echo Hey $name!
+echo -e '---FINISH Survival Prediction---\n'
