@@ -32,13 +32,10 @@ patients = pd.to_numeric(patients)
 brainMetsMinusPatients = brainMetsFeaturesRaw.drop(columns = ['patient'])
 
 # Apply min-max column wise normilization
-#print('MIN: ', brainMetsMinusPatients.min())
-#print('MAX: ', brainMetsMinusPatients.max())
-#print('DATA: ', brainMetsMinusPatients)
-# Need to change up normalizing since we only have one data point
-# Maybe load in a sample csv and normalize our data point based on that?
+rawComparisonData = pd.read_csv('rawComparisonPredictionData.csv')
+rawComparisonData = rawComparisonData.drop(columns = ['patient'])
 
-brainMetsSelectedFeaturesNormalized = (brainMetsMinusPatients-brainMetsMinusPatients.min())/(brainMetsMinusPatients.max()-brainMetsMinusPatients.min())
+brainMetsSelectedFeaturesNormalized = (brainMetsMinusPatients-rawComparisonData.min())/(rawComparisonData.max()-rawComparisonData.min())
 
 # Compare with static predictionData csv to keep certain columns
 comparisonData = pd.read_csv('comparisonPredictionData.csv')
@@ -53,6 +50,7 @@ for col in columnsCurrent:
         columnsToDrop.append(col)
 
 brainMetsSelectedFeaturesFinal.drop(columns=columnsToDrop)
+brainMetsSelectedFeaturesFinal = brainMetsSelectedFeaturesFinal.dropna(axis='columns')
 
 # add patient number back to dataframe
 brainMetsSelectedFeaturesFinal['patient'] = patients 
