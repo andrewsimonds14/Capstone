@@ -10,8 +10,7 @@ onlyPredictionData = predictionData.drop(columns = [ 'AliveStatus0Dead1Alive','N
 
 survivalModel = load_model('./survival_model.zip')
 
-preds = survivalModel.predict_survival(onlyPredictionData.iloc[:,:-2].transpose())
-print(preds)
+preds = survivalModel.predict_survival(onlyPredictionData)
 preds_df = pd.DataFrame(preds).T
 preds_df.to_excel('preds.xlsx') 
 

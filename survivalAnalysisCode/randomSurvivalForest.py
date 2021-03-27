@@ -18,6 +18,7 @@ from pysurvival.utils.metrics import concordance_index
 from statistics import mean 
 from pysurvival.utils.display import compare_to_actual
 from pysurvival.utils.display import integrated_brier_score
+from pysurvival.utils import save_model
 
 # import selected features from previous script
 predictionData = pd.read_csv('./predictionData.csv')
@@ -39,7 +40,7 @@ Etemp = E
 featuresTemp = features
 
 # setting tested parameters for selection
-num_tree=(10, 15, 20, 50, 100, 200)
+num_tree=(10, 15, 20, 50, 100)
 max_depth=(1, 2, 3, 5, 10, 12, 15)
 min_node=(1, 2, 3, 5, 10, 12)
 
@@ -96,7 +97,9 @@ for train_index, test_index in kf.split(X,E):
     print('IBS: {:.2f}'.format(ibs))
     i = i+1            
 
-            
+# Save the model for use in pipeline
+#save_model(xst, '../pipeline/survival_model.zip')         
+
 xst.variable_importance_table.head(20)     
 preds = xst.predict_survival(onlyPredictionData.iloc[:,:-2].transpose())
 preds_df = pd.DataFrame(preds).T

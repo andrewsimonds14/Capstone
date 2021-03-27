@@ -1,6 +1,15 @@
 #!/bin/bash
 # Run pipeline on desired image
 
+'''
+Pre requisites:
+    Need to have a single scan to test on in the format of FSRTCASE_XXX.nii.gz and need the directory where it is.
+    Need a trained 3D nnUNet model to use to predict the mask of the scan.
+    Need a trained survival model that must be saved in a zip folder in this directory as survival_model.zip
+Data Requirements:
+    brainMets patient data for survival in days
+    raw and preprocessed prediction data to normalize and extract features from our new single feature set
+'''
 # Change working directory to where we wanna be in case it's being run from somewhere else
 #cd /home/lab/capstoneGit/Capstone
 
@@ -29,9 +38,8 @@ echo -e '---FINISH Feature Selection---\n'
 
 # SURVIVAL PREDICTION
 echo -e '---START Survival Prediction---\n'
-# Give pre-processed csv to survival prediction model
+# Give pre-processed csv to survival prediction model and output survival prediction graph
+# We need a survival_model.zip already saved in this directory from the survival forest training file (Done as of now but may need to update)
 python randomSurvivalForest.py
-
-# Output graph of survival prediction
 
 echo -e '---FINISH Survival Prediction---\n'
