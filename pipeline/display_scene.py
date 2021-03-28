@@ -1,6 +1,7 @@
+import sys
 
-volume_path = '/home/lab/nnUNet_data/nnUNet_raw_data_base/nnUNet_raw_data/Task502_BrainMetastases/imagesTr/FSRTCASE_001_0000.nii.gz'
-segmentation_path = '/home/lab/nnUNet_data/nnUNet_raw_data_base/nnUNet_raw_data/Task502_BrainMetastases/labelsTr/FSRTCASE_001.nii.gz'
+volume_path = str(sys.argv[1])
+segmentation_path = str(sys.argv[2])
 
 # Load volume
 volume = slicer.util.loadVolume(volume_path)

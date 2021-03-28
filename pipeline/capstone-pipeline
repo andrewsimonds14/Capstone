@@ -1,17 +1,19 @@
 #!/bin/bash
 # Run pipeline on desired image
 
-'''
-Pre requisites:
-    Need to have a single scan to test on in the format of FSRTCASE_XXX.nii.gz and need the directory where it is.
-    Need a trained 3D nnUNet model to use to predict the mask of the scan.
-    Need a trained survival model that must be saved in a zip folder in this directory as survival_model.zip
-Data Requirements:
-    brainMets patient data for survival in days
-    raw and preprocessed prediction data to normalize and extract features from our new single feature set
-'''
+#Current test path: /home/lab/capstoneGit/Capstone/pipeline/inputTest
+
+#Pre requisites:
+#    Need to have a single scan to test on in the format of FSRTCASE_XXX.nii.gz and need the directory where it is.
+#    Need a trained 3D nnUNet model to use to predict the mask of the scan.
+#    Need a trained survival model that must be saved in a zip folder in this directory as survival_model.zip
+#Data Requirements:
+#    brainMets patient data for survival in days
+#    raw and preprocessed prediction data to normalize and extract features from our new single feature set
+#
+
 # Change working directory to where we wanna be in case it's being run from somewhere else
-#cd /home/lab/capstoneGit/Capstone
+cd /home/lab/capstoneGit/Capstone/pipeline
 
 # SEGMENTATION
 
@@ -24,6 +26,13 @@ echo -e '---START Segmentation---\n'
 # nnUNet_predict -i $inputFolder -o $inputFolder/results -t 502 -m 3d_fullres --save_npz
 
 # New NIFTY saved in $inputFolder/../outputTest, we need to access it here to open in slicer for viewing if possible
+# Open new terminal to open slicer and display segmentation after getting file paths
+inputFile=$(ls $inputFolder)
+outputFile=$(ls $inputFolder/../outputTest)
+inputFilePath="$inputFolder/$inputFile"
+outputFilePath="$inputFolder/../outputTest/$outputFile"
+
+gnome-terminal -- /home/lab/Slicer-4.11.20210226-linux-amd64/Slicer --python-script display_scene.py $inputFilePath $outputFilePath
 echo -e '---FINISH Segmentation---\n'
 
 # FEATURE EXTRACTION
