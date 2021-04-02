@@ -10,13 +10,15 @@ data_path = str(sys.argv[1]) #FSRTCASE_200_0000.nii" # Directory holding NIFTI f
 data_path_mask = str(sys.argv[2]) #FSRTCASE_200.nii # Directory holding NIFTI files masks
 row_flag = 1
 
+print('MASK PATH: ', data_path_mask)
+
 with open('radiomicfeatures.csv', mode='w') as csv_file:
 
 
     for root, dirs, files in os.walk(data_path, topdown=False):
         for name in sorted(files):
             img_name = os.path.join(root,name)        
-            mask_name = os.path.join(data_path_mask,name.rsplit('_',1)[0]+'.nii.gz')
+            mask_name = os.path.join(data_path_mask,name.split('_')[0] + '_' + name.split('_')[1])
             patient_name = name.split('_')[0] + name.split('_')[1]
 
             # Read the .nii image containing the volume with SimpleITK:

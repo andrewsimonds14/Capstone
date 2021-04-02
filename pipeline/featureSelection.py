@@ -23,7 +23,7 @@ brainMetsFeaturesRaw.describe()
 
 # remove letters from patient number
 for i, name in enumerate(brainMetsFeaturesRaw.patient):
-    brainMetsFeaturesRaw.patient[i] = name.replace('FSRTCASE', '')
+    brainMetsFeaturesRaw.patient[i] = (name.replace('FSRTCASE', '')).split('.')[0]
 
 # create patient dataframe and covert patient id to numerical
 patients = brainMetsFeaturesRaw['patient']

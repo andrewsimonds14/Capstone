@@ -20,24 +20,26 @@ cd /home/lab/capstoneGit/Capstone/pipeline
 # Ask user for NIFTY file path
 echo 'Enter folder where desired image is (FSRTCASE_XXX.nii.gz)'
 read inputFolder
-mkdir -p $inputFolder/../outputTest
+mkdir -p $inputFolder/results
+mkdir -p $inputFolder/resultsDump
 echo -e '---START Segmentation---\n'
 
-# nnUNet_predict -i $inputFolder -o $inputFolder/results -t 502 -m 3d_fullres --save_npz
+nnUNet_predict -i $inputFolder -o $inputFolder/resultsDump -t 502 -m 3d_fullres
 
 # New NIFTY saved in $inputFolder/../outputTest, we need to access it here to open in slicer for viewing if possible
 # Open new terminal to open slicer and display segmentation after getting file paths
-inputFile=$(ls $inputFolder)
-outputFile=$(ls $inputFolder/../outputTest)
+inputFile=$(ls -p $inputFolder | grep -v / ) # Parse out folder names from ls command
+outputFile=$(ls $inputFolder/resultsDump | head -n1 | cut -d " " -f1) # Grab .nii.gz file
+mv /home/lab/capstoneGit/Capstone/pipeline/inputTest/resultsDump/$outputFile /home/lab/capstoneGit/Capstone/pipeline/inputTest/results
 inputFilePath="$inputFolder/$inputFile"
-outputFilePath="$inputFolder/../outputTest/$outputFile"
+outputFilePath="$inputFolder/results/$outputFile"
 
 gnome-terminal -- /home/lab/Slicer-4.11.20210226-linux-amd64/Slicer --python-script display_scene.py $inputFilePath $outputFilePath
 echo -e '---FINISH Segmentation---\n'
 
 # FEATURE EXTRACTION
 echo -e '---START Feature Extraction---\n'
-python extraction.py $inputFolder $inputFolder/../outputTest
+python extraction.py $inputFolder $inputFolder/results/
 echo -e '---FINISH Feature Extraction---\n'
 
 # Normalize feature and remove colinear features in csv
